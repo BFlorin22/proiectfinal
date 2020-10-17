@@ -1,15 +1,18 @@
-FROM node:11.9-alpine
+# base image
+FROM node:11.6
 
-WORKDIR /app
+# set working directory
+RUN mkdir /usr/src/app
+WORKDIR /usr/src/app
 
-COPY package.json package.json
+# add `/usr/src/app/node_modules/.bin` to $PATH
+ENV PATH /usr/src/app/node_modules/.bin:$PATH
 
-RUN npm install --quiet
+# install and cache app dependencies
+COPY package.json /usr/src/app/package.json
+RUN npm install
 
-COPY . .
+EXPOSE 3000
 
-RUN npm run db:migrate
-
-EXPOSE 5000
-
-CMD [ "npm", "run", "dev" ]
+# start app
+CMD ["npm", "start"]
